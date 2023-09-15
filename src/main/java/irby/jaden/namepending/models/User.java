@@ -15,17 +15,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Entity
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @NonNull
     private String email;
 
     @NonNull
     private String username;
+
+    @NonNull
+    private String password;
 
     //might need to store in different format
     @NonNull
@@ -39,7 +43,10 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    private List<User> friends = new ArrayList<>();
+    private List<UUID> friends = new ArrayList<>();
+    private List<UUID> sentFriendRequests = new ArrayList<>();
+    private List<UUID> receivedFriendRequests = new ArrayList<>();
+
     private List<Chat> chats = new ArrayList<>();
 
 }
