@@ -16,10 +16,10 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-public class User {
+public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NonNull
@@ -33,7 +33,7 @@ public class User {
 
     //might need to store in different format
     @NonNull
-    private String profilePicture;
+    private String profilePictureUrl;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,10 +43,17 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    private List<UUID> friends = new ArrayList<>();
-    private List<UUID> sentFriendRequests = new ArrayList<>();
-    private List<UUID> receivedFriendRequests = new ArrayList<>();
+    @ManyToMany
+    private List<UserEntity> friends = new ArrayList<>();
+    @ManyToMany
+    private List<UserEntity> sentFriendRequests = new ArrayList<>();
+    @ManyToMany
+    private List<UserEntity> receivedFriendRequests = new ArrayList<>();
 
+    @OneToMany
     private List<Chat> chats = new ArrayList<>();
+
+    private boolean active = true;
+
 
 }

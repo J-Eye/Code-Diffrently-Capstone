@@ -1,33 +1,57 @@
 package irby.jaden.namepending.controllers;
 
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
-import irby.jaden.namepending.models.User;
-import irby.jaden.namepending.serivce.UserService;
+import irby.jaden.namepending.Execeptions.UserException;
+import irby.jaden.namepending.models.UserEntity;
+import irby.jaden.namepending.serivce.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import java.util.List;
 
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/user")
 @CrossOrigin("*")
 public class UserController {
 
-    private UserService userService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
 
 
 
     @PostMapping("/register")
-    public ResponseEntity<UserRecord> registerUser(@RequestBody User user) throws FirebaseAuthException {
-        UserRecord createdUser = userService.RegisterUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.OK);
+    public ResponseEntity<UserEntity> registerUser(@RequestBody UserEntity userEntity) throws UserException {
+        UserEntity createdUserEntity = userService.registerUser(userEntity);
+        return new ResponseEntity<>(createdUserEntity, HttpStatus.OK);
     }
+
+    @PutMapping("/update{id}")
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity userEntity, @PathVariable int id) throws UserException {
+        UserEntity updatedUserEntity = userService.updateUser(userEntity, id);
+        return new ResponseEntity<>(updatedUserEntity, HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<UserEntity>> getAll(){
+        List<UserEntity> userEntityList = userService.getAll();
+        return new ResponseEntity<>(userEntityList, HttpStatus.OK);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<UserEntity> getById(@PathVariable int id) throws UserException {
+        UserEntity userEntity = userService.getById(id);
+        return new ResponseEntity<>(userEntity, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable int id) throws UserException {
+        Boolean result = userService.deleteUser(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

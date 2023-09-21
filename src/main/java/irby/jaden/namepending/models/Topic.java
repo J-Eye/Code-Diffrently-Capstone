@@ -15,15 +15,17 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Entity
 public class Topic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @NonNull
     private String name;
 
+    @OneToMany
     List<Message> messages = new ArrayList<>();
 
     @CreationTimestamp
@@ -33,4 +35,6 @@ public class Topic {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    private boolean active = true;
 }

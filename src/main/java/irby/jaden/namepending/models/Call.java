@@ -13,14 +13,16 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Entity
 public class Call {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @NonNull
-    private List<User> participants;
+    @OneToMany
+    private List<UserEntity> participants;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

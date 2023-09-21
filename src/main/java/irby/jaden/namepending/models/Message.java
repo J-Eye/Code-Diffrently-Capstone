@@ -13,17 +13,23 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Entity
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @NonNull
     private String content;
 
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
     @NonNull
-    private User sender;
+    private UserEntity sender;
+
+    @NonNull
+    private String type;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -32,4 +38,7 @@ public class Message {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    private boolean active = true;
+
 }

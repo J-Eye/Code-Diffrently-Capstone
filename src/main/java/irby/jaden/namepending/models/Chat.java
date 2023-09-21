@@ -8,18 +8,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
+@Entity
 public class Chat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @NonNull
     private String joinId;
@@ -27,6 +27,7 @@ public class Chat {
     @NonNull
     private String Name;
 
+    @OneToMany
     private List<Topic> topics = new ArrayList<>();
 
     @CreationTimestamp
@@ -36,5 +37,11 @@ public class Chat {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    @OneToMany
+    private List<UserEntity> users = new ArrayList<>();
+
+    private boolean active = true;
+
 
 }
