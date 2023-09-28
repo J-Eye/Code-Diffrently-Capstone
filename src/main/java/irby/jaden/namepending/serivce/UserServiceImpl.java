@@ -1,6 +1,7 @@
 package irby.jaden.namepending.serivce;
 
-import irby.jaden.namepending.Execeptions.UserException;
+import irby.jaden.namepending.Execeptions.UserAlreadyExistsException;
+import irby.jaden.namepending.Execeptions.UserNotFoundException;
 import irby.jaden.namepending.models.UserEntity;
 import irby.jaden.namepending.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,34 +20,34 @@ public class UserServiceImpl implements UserService{
         this.userRepo = userRepo;
     }
 
-    public UserEntity registerUser(UserEntity userEntity) throws UserException {
+    public UserEntity registerUser(UserEntity userEntity) throws UserAlreadyExistsException {
 
         Optional<UserEntity> optionalUser = userRepo.findByUsername(userEntity.getUsername());
         if(optionalUser.isPresent()){
-            throw new UserException("Account with username "+ userEntity.getUsername()+" exists");
+            throw new UserAlreadyExistsException("Account with username "+ userEntity.getUsername()+" exists");
         }
         return userRepo.save(userEntity);
      }
 
     @Override
-    public UserEntity loginUser(String email, String password) throws UserException {
+    public UserEntity loginUser(String email, String password) throws UserNotFoundException {
         Optional<UserEntity> optionalUser = userRepo.findByEmail(email);
         if(optionalUser.isEmpty()){
-            throw new UserException("Account with email "+ email+" does not exist");
+            throw new UserNotFoundException("Account with email "+ email+" does not exist");
         }
 
         UserEntity userEntityObj = optionalUser.get();
 
         if(!userEntityObj.getPassword().equals(password)){
-            throw new UserException("Password "+ password+ " is incorrect");
+            throw new UserNotFoundException("Password "+ password+ " is incorrect");
         }
 
         return userEntityObj;
     }
 
     @Override
-    public UserEntity updateUser(UserEntity userEntity, int id) throws UserException {
-        UserEntity updatedUserEntity = findUserById(id);
+    public UserEntity updateUser(UserEntity userEntity, int id) throws UserNotFoundException {
+        UserEntity updatedUserEntity = getById(id);
 
         updatedUserEntity.setUsername(userEntity.getUsername());
         updatedUserEntity.setChats(userEntity.getChats());
@@ -61,8 +62,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Boolean deleteUser(int id) throws UserException {
-        UserEntity userEntity = findUserById(id);
+    public Boolean deleteUser(int id) throws UserNotFoundException {
+        UserEntity userEntity = getById(id);
         userEntity.setActive(false);
         userEntity.setUsername("DeletedUser#"+ userEntity.getId());
         userRepo.save(userEntity);
@@ -70,27 +71,17 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity getById(int id) throws UserException {
-        return findUserById(id);
+    public UserEntity getById(int id) throws UserNotFoundException {
+        Optional<UserEntity> optionalUser = userRepo.findById(id);
+        if(optionalUser.isEmpty()){
+            throw new UserNotFoundException("Account with id "+id+" does not exist");
+        }
+        return optionalUser.get();
     }
 
     @Override
     public List<UserEntity> getAll() {
         return userRepo.findAll();
     }
-
-    private UserEntity findUserById(int id) throws UserException {
-        Optional<UserEntity> optionalUser = userRepo.findById(id);
-        if(optionalUser.isEmpty()){
-            throw new UserException("Account with idd "+id+" does not exist");
-        }
-        UserEntity userEntity = optionalUser.get();
-        if(!userEntity.isActive()){
-            throw new UserException("Account with id "+id+" is disabled");
-        }
-
-        return optionalUser.get();
-    }
-
 
 }

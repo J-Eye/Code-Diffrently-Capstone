@@ -25,13 +25,13 @@ public class CallController {
     @PostMapping
     public ResponseEntity<Call> create(@RequestBody Call call){
         Call createdCall = callService.saveCall(call);
-        return new ResponseEntity<>(createdCall, HttpStatus.OK);
+        return new ResponseEntity<>(createdCall, HttpStatus.CREATED);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Call> getById(@PathVariable int id) throws CallException {
         Call call = callService.getById(id);
-        return new ResponseEntity<>(call, HttpStatus.CREATED);
+        return new ResponseEntity<>(call, HttpStatus.OK);
     }
 
     @GetMapping
